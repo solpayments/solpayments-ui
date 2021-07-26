@@ -1,48 +1,35 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { RPC_API_URL } from './helpers/config';
-  import { adapter, connected, solanaNetwork } from './stores';
+  import { solanaNetwork } from './stores';
   import { getTokenRegistry } from './stores/tokenRegistry';
-  import Wallet from './components/Wallet/Wallet.svelte';
-
-  export let name: string;
+  import Topbar from './components/partials/Topbar.svelte';
+  import Horizontal from './components/partials/Horizontal.svelte';
+  import PageTitle from './components/partials/PageTitle.svelte';
+  import Footer from './components/partials/Footer.svelte';
+  import MerchantList from './components/Merchants/index.svelte';
 
   solanaNetwork.update(() => RPC_API_URL);
   onMount(async () => getTokenRegistry());
 </script>
-
-<main>
-  <h1>Hello {name}!</h1>
-  <p>
-    Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte
-    apps.
-  </p>
-
-  {#if $connected}
-    <p style="color: green">Connected to {$adapter?.publicKey}</p>
-  {:else}
-    <Wallet />
-  {/if}
-</main>
-
-<style>
-  main {
-    text-align: center;
-    padding: 1em;
-    max-width: 240px;
-    margin: 0 auto;
-  }
-
-  h1 {
-    color: #ff3e00;
-    text-transform: uppercase;
-    font-size: 4em;
-    font-weight: 100;
-  }
-
-  @media (min-width: 640px) {
-    main {
-      max-width: none;
-    }
-  }
-</style>
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <Topbar/>
+    <Horizontal/>
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <PageTitle/>
+                <MerchantList/>
+            </div>
+            <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+        <Footer/>
+    </div>
+    <!-- end main content-->
+</div>
+<!-- END layout-wrapper -->
