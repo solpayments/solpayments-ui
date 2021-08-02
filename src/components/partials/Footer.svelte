@@ -1,4 +1,6 @@
-<script lang="ts"></script>
+<script lang="ts">
+  import SolletConnector from '../Wallet/Wallet.svelte';
+</script>
 
 <footer class="footer">
   <!-- Connect Modal -->
@@ -13,11 +15,17 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="connectModalLabel">Connect Your Wallet</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+          <button
+            type="button"
+            id="connectModalButton"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          />
         </div>
         <div class="modal-body">
           <div class="d-grid gap-2">
-            <button class="btn btn-outline-primary" type="button">Sollet.io</button>
+            <SolletConnector />
             <button class="btn btn-outline-secondary disabled" type="button"
               >Phantom (coming soon)</button
             >
