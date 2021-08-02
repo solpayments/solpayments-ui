@@ -1,4 +1,6 @@
-<script lang="ts"></script>
+<script lang="ts">
+  import { adapter, connected } from '../../stores/index';
+</script>
 
 <header id="page-topbar">
   <div class="navbar-header">
@@ -161,72 +163,74 @@
           </div>
         </div>
       </div>
-
-      <div class="dropdown d-inline-block">
-        <button
-          type="button"
-          class="btn header-item waves-effect"
-          id="page-header-user-dropdown"
-          data-bs-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          <i class="mdi mdi-account-circle fs-2 align-middle me-1" />
-          <i class="mdi mdi-chevron-down d-none d-xl-inline-block" />
-        </button>
-        <div class="dropdown-menu dropdown-menu-end">
-          <!-- item-->
-          <h6 class="dropdown-header">44fVncfVm5fB8VsRBwVZW75FdR1nSVUKcf9nUa4ky6qN</h6>
-          <a class="dropdown-item" href="#"
+      {#if $connected && $adapter && $adapter.publicKey}
+        <div class="dropdown d-inline-block">
+          <button
+            type="button"
+            class="btn header-item waves-effect"
+            id="page-header-user-dropdown"
+            data-bs-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <i class="mdi mdi-account-circle fs-2 align-middle me-1" />
+            <i class="mdi mdi-chevron-down d-none d-xl-inline-block" />
+          </button>
+          <div class="dropdown-menu dropdown-menu-end">
+            <!-- item-->
+            <h6 class="dropdown-header">{$adapter.publicKey.toBase58()}</h6>
+            <!-- <a class="dropdown-item" href="#"
             ><i class="mdi mdi-wallet text-muted font-size-16 align-middle me-1" />
             <span class="align-middle">Balance : <b>$1901.67</b></span></a
-          >
+          > -->
 
-          <div class="dropdown-divider" />
+            <div class="dropdown-divider" />
 
-          <div class="dropdown-item">
-            <div class="col-sm-6 mb-1">
-              <span class="me-2"
-                ><i class="mdi mdi-weather-sunny text-muted font-size-16 align-middle me-1" /></span
-              >
-              <input
-                class="form-check-input"
-                type="radio"
-                name="layout-mode"
-                id="layout-mode-light"
-                value="light"
-                onchange="document.body.setAttribute('data-layout-mode', 'light')"
-              />
-              <label class="form-check-label me-2" for="layout-mode-light">Light</label>
-              <input
-                class="form-check-input"
-                type="radio"
-                name="layout-mode"
-                id="layout-mode-dark"
-                value="dark"
-                onchange="document.body.setAttribute('data-layout-mode', 'dark')"
-              />
-              <label class="form-check-label" for="layout-mode-dark">Dark</label>
+            <div class="dropdown-item">
+              <div class="col-sm-6 mb-1">
+                <span class="me-2"
+                  ><i
+                    class="mdi mdi-weather-sunny text-muted font-size-16 align-middle me-1"
+                  /></span
+                >
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="layout-mode"
+                  id="layout-mode-light"
+                  value="light"
+                  onchange="document.body.setAttribute('data-layout-mode', 'light')"
+                />
+                <label class="form-check-label me-2" for="layout-mode-light">Light</label>
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="layout-mode"
+                  id="layout-mode-dark"
+                  value="dark"
+                  onchange="document.body.setAttribute('data-layout-mode', 'dark')"
+                />
+                <label class="form-check-label" for="layout-mode-dark">Dark</label>
+              </div>
             </div>
+            <div class="dropdown-divider" />
+            <button class="dropdown-item" on:click={() => adapter.update(() => undefined)}
+              ><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1" /> Disconnect
+            </button>
           </div>
-          <div class="dropdown-divider" />
-          <a class="dropdown-item" href="#"
-            ><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1" />
-            <span class="align-middle">Disconnect</span></a
-          >
         </div>
-      </div>
-
-      <div class="dropdown d-inline-block">
-        <button
-          type="button"
-          class="btn header-item waves-effect"
-          data-bs-toggle="modal"
-          data-bs-target="#connectModal"
-        >
-          <i class="mdi mdi-wallet fs-2 align-middle" /> Connect
-        </button>
-      </div>
+      {:else}
+        <div class="dropdown d-inline-block">
+          <button
+            type="button"
+            class="btn header-item waves-effect"
+            data-bs-toggle="modal"
+            data-bs-target="#connectModal"
+          >
+            <i class="mdi mdi-wallet fs-2 align-middle" /> Connect
+          </button>
+        </div>
+      {/if}
     </div>
   </div>
 </header>
