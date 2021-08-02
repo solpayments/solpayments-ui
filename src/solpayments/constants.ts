@@ -1,0 +1,3 @@
+export const ORDER_ACC_MERCHANT_FIELD_OFFSET = 18;
+export const MERCHANT_ACC_OWNER_FIELD_OFFSET = 1;
+export const SOL_DECIMALS = 9;
