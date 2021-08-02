@@ -1,98 +1,103 @@
-<script lang="ts"></script>
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { Connection } from '@solana/web3.js';
+  import { PROGRAM_ID, RPC_API_URL } from '../../helpers/config';
+  import { PROCESSED } from '../../helpers/constants';
+  import { abbreviateAddress, onInterval, sleep } from '../../helpers/utils';
+  import { adapter, connected } from '../../stores/index';
+  import { getMerchantAccounts } from '../../solpayments/merchants';
+  import { merchantAccounts } from '../../solpayments/stores';
+
+  let merchantsPromise: Promise<any> | null = null;
+  export let merchantsTimeout = 1000 * 30;
+
+  const loadMerchants = () => {
+    if ($adapter && $adapter.publicKey) {
+      merchantsPromise = getMerchantAccounts({
+        connection: new Connection(RPC_API_URL, PROCESSED),
+        ownerKey: $adapter.publicKey,
+        programId: PROGRAM_ID,
+      }).then((result) => {
+        sleep(1000).then(() => {
+          merchantsPromise = null;
+        });
+        if (result.error) {
+          throw result.error;
+        } else {
+          merchantAccounts.update(() => result.value || []);
+        }
+      });
+    }
+  };
+
+  onInterval(() => loadMerchants(), merchantsTimeout);
+
+  onMount(async () => {
+    loadMerchants();
+  });
+</script>
 
 <div class="row">
   <div class="col-xl-6">
     <div class="card card-height-100">
       <div class="card-body">
-        <div class="float-end">
-          <div class="dropdown">
-            <a
-              class="dropdown-toggle text-reset"
-              href="#"
-              id="dropdownMenuButton3"
-              data-bs-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <span class="fw-semibold">Sort By:</span>
-              <span class="text-muted">Recent<i class="mdi mdi-chevron-down ms-1" /></span>
-            </a>
+        {#if $connected}
+          {#if merchantsPromise}
+            {#await merchantsPromise}
+              <p>loading merchants</p>
+            {:catch _error}
+              <p style="color: red">{_error}</p>
+            {/await}
+          {:else}
+            <p>not loading merchants</p>
+          {/if}
 
-            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton3">
-              <a class="dropdown-item" href="#">Maximum</a>
-              <a class="dropdown-item" href="#">Recent</a>
-              <a class="dropdown-item" href="#">Minimum</a>
+          <!-- {#if $merchantAccounts} -->
+          <div class="float-end">
+            <div class="dropdown">
+              <a
+                class="dropdown-toggle text-reset"
+                href="#"
+                id="dropdownMenuButton3"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <span class="fw-semibold">Sort By:</span>
+                <span class="text-muted">Recent<i class="mdi mdi-chevron-down ms-1" /></span>
+              </a>
+
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton3">
+                <a class="dropdown-item" href="#">Maximum</a>
+                <a class="dropdown-item" href="#">Recent</a>
+                <a class="dropdown-item" href="#">Minimum</a>
+              </div>
             </div>
           </div>
-        </div>
 
-        <h4 class="card-title mb-4">Accounts</h4>
+          <h4 class="card-title mb-4">Accounts</h4>
 
-        <div class="table-responsive">
-          <table class="table align-middle table-striped table-nowrap mb-0">
-            <tbody>
-              <tr>
-                <td> Herbert C. Patton </td>
-                <td><i class="mdi mdi-checkbox-blank-circle text-success" /> Confirm </td>
-                <td> $14,584 </td>
-                <td> 5/12/2016 </td>
-                <td>
-                  <a href="orders.html" class="btn btn-light btn-sm waves-effect">
-                    <i class="mdi mdi-square-edit-outline me-1" /> View</a
-                  >
-                </td>
-              </tr>
-
-              <tr>
-                <td> Mathias N. Klausen </td>
-                <td><i class="mdi mdi-checkbox-blank-circle text-warning" /> Waiting payment</td>
-                <td> $8,541 </td>
-                <td> 10/11/2016 </td>
-                <td>
-                  <a href="orders.html" class="btn btn-light btn-sm waves-effect">
-                    <i class="mdi mdi-square-edit-outline me-1" /> View</a
-                  >
-                </td>
-              </tr>
-
-              <tr>
-                <td> Nikolaj S. Henriksen </td>
-                <td><i class="mdi mdi-checkbox-blank-circle text-success" /> Confirm </td>
-                <td> $954 </td>
-                <td> 8/11/2016 </td>
-                <td>
-                  <a href="orders.html" class="btn btn-light btn-sm waves-effect">
-                    <i class="mdi mdi-square-edit-outline me-1" /> View</a
-                  >
-                </td>
-              </tr>
-
-              <tr>
-                <td> Lasse C. Overgaard </td>
-                <td><i class="mdi mdi-checkbox-blank-circle text-danger" /> Payment expired</td>
-                <td> $44,584 </td>
-                <td> 7/11/2016 </td>
-                <td>
-                  <a href="orders.html" class="btn btn-light btn-sm waves-effect">
-                    <i class="mdi mdi-square-edit-outline me-1" /> View</a
-                  >
-                </td>
-              </tr>
-
-              <tr>
-                <td> Kasper S. Jessen </td>
-                <td><i class="mdi mdi-checkbox-blank-circle text-success" /> Confirm </td>
-                <td> $8,844 </td>
-                <td> 1/11/2016 </td>
-                <td>
-                  <a href="orders.html" class="btn btn-light btn-sm waves-effect">
-                    <i class="mdi mdi-square-edit-outline me-1" /> View</a
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <div class="table-responsive">
+            <table class="table align-middle table-striped table-nowrap mb-0">
+              <tbody>
+                {#each $merchantAccounts as merchantAccount}
+                  <tr>
+                    <td> {abbreviateAddress(merchantAccount.address.toBase58())} </td>
+                    <td><i class="mdi mdi-checkbox-blank-circle text-success" /> Confirm </td>
+                    <td> $14,584 </td>
+                    <td> 5/12/2016 </td>
+                    <td>
+                      <a href="merchants.html" class="btn btn-light btn-sm waves-effect">
+                        <i class="mdi mdi-square-edit-outline me-1" /> View</a
+                      >
+                    </td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+          <!-- {/if} -->
+        {/if}
       </div>
     </div>
   </div>
