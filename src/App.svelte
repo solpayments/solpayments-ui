@@ -12,24 +12,25 @@
   solanaNetwork.update(() => RPC_API_URL);
   onMount(async () => getTokenRegistry());
 </script>
+
 <!-- Begin page -->
 <div id="layout-wrapper">
-    <Topbar/>
-    <Horizontal/>
-    <!-- ============================================================== -->
-    <!-- Start right Content here -->
-    <!-- ============================================================== -->
-    <div class="main-content">
-        <div class="page-content">
-            <div class="container-fluid">
-                <PageTitle/>
-                <MerchantList/>
-            </div>
-            <!-- container-fluid -->
-        </div>
-        <!-- End Page-content -->
-        <Footer/>
+  <Topbar />
+  <Horizontal />
+  <!-- ============================================================== -->
+  <!-- Start right Content here -->
+  <!-- ============================================================== -->
+  <div class="main-content">
+    <div class="page-content">
+      <div class="container-fluid">
+        <PageTitle />
+        <MerchantList />
+      </div>
+      <!-- container-fluid -->
     </div>
-    <!-- end main content-->
+    <!-- End Page-content -->
+    <Footer />
+  </div>
+  <!-- end main content-->
 </div>
 <!-- END layout-wrapper -->
