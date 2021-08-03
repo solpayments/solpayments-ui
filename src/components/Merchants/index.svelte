@@ -4,9 +4,10 @@
   import { PROGRAM_ID, RPC_API_URL } from '../../helpers/config';
   import { PROCESSED } from '../../helpers/constants';
   import { abbreviateAddress, onInterval, sleep } from '../../helpers/utils';
-  import { adapter, connected } from '../../stores/index';
+  import { adapter, connected } from '../../stores';
   import { getMerchantAccounts } from '../../solpayments/merchants';
   import { merchantAccounts } from '../../solpayments/stores';
+  import AccountForm from './form.svelte';
 
   let merchantsPromise: Promise<any> | null = null;
   export let merchantsTimeout = 1000 * 30;
@@ -77,15 +78,17 @@
 
           <h4 class="card-title mb-4">Accounts</h4>
 
+          <button class="btn btn-outline-secondary" on:click={() => loadMerchants()}> load </button>
+
           <div class="table-responsive">
             <table class="table align-middle table-striped table-nowrap mb-0">
               <tbody>
                 {#each $merchantAccounts as merchantAccount}
                   <tr>
                     <td> {abbreviateAddress(merchantAccount.address.toBase58())} </td>
-                    <td><i class="mdi mdi-checkbox-blank-circle text-success" /> Confirm </td>
+                    <!-- <td><i class="mdi mdi-checkbox-blank-circle text-success" /> Confirm </td>
                     <td> $14,584 </td>
-                    <td> 5/12/2016 </td>
+                    <td> 5/12/2016 </td> -->
                     <td>
                       <a href="merchants.html" class="btn btn-light btn-sm waves-effect">
                         <i class="mdi mdi-square-edit-outline me-1" /> View</a
@@ -106,64 +109,7 @@
     <div class="card card-height-100">
       <div class="card-body">
         <h4 class="card-title mb-4">Create Account</h4>
-
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="mb-3">
-              <label for="example-text-input" class="form-label">Text</label>
-              <input
-                class="form-control"
-                type="text"
-                value="Artisanal kale"
-                id="example-text-input"
-              />
-            </div>
-          </div>
-        </div>
-        <!-- end row -->
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="mb-3">
-              <label for="example-email-input" class="form-label">Email</label>
-              <input
-                class="form-control"
-                type="email"
-                value="bootstrap@example.com"
-                placeholder="Enter Email"
-                id="example-email-input"
-              />
-            </div>
-          </div>
-        </div>
-        <!-- end row -->
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="mb-3">
-              <label for="example-email-input" class="form-label">Something else</label>
-              <input
-                class="form-control"
-                type="email"
-                value="bootstrap@example.com"
-                placeholder="Enter Email"
-                id="example-email-input2"
-              />
-            </div>
-          </div>
-        </div>
-        <!-- end row -->
-        <div class="row">
-          <div class="col-lg-6">
-            <div class="mb-3">
-              <button class="btn btn-light w-lg" type="submit">Cancel</button>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="mb-3">
-              <button class="btn btn-success w-lg" type="submit">Submit</button>
-            </div>
-          </div>
-        </div>
-        <!-- end row -->
+        <AccountForm />
       </div>
     </div>
   </div>
