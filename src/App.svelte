@@ -8,6 +8,7 @@
   import PageTitle from './components/partials/PageTitle.svelte';
   import Footer from './components/partials/Footer.svelte';
   import MerchantList from './components/Merchants/index.svelte';
+  import './styles/solpayments.css';
 
   solanaNetwork.update(() => RPC_API_URL);
   onMount(async () => getTokenRegistry());
