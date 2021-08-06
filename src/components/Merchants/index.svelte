@@ -33,6 +33,10 @@
 
   onInterval(() => loadMerchants(), merchantsTimeout);
 
+  const loadMerchantsSideEffectFunc = async () => {
+    loadMerchants();
+  };
+
   onMount(async () => {
     loadMerchants();
   });
@@ -109,7 +113,7 @@
     <div class="card card-height-100">
       <div class="card-body">
         <h4 class="card-title mb-4">Create Account</h4>
-        <AccountForm />
+        <AccountForm sideEffect={loadMerchantsSideEffectFunc()} />
       </div>
     </div>
   </div>
