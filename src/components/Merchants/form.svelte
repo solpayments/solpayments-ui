@@ -1,21 +1,35 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
   import { Connection } from '@solana/web3.js';
   import { adapter, connected } from '../../stores';
   import { PROGRAM_ID, RPC_API_URL } from '../../helpers/config';
   import { CONFIRMED } from '../../helpers/constants';
   import { registerMerchant } from '../../solpayments/transactions';
+  import { transactionsMap, TxStatus } from '../../stores/transaction';
+  import InstructionResult from '../InstructionResult.svelte';
 
+  export let sideEffect: Promise<void> | null = null;
   let seed: string;
   let data: undefined = undefined;
   let registrationProcessing = false;
   let hasError = false;
-  let _registrationResultTxId: string | undefined = undefined;
+  let registrationResultTxId: string | undefined = undefined;
   let registrationPromise: Promise<void | string> | null = null;
+
+  const unsubscribe = transactionsMap.subscribe((value) => {
+    if (
+      value &&
+      registrationResultTxId &&
+      value.get(registrationResultTxId)?.status != TxStatus.Unknown
+    ) {
+      registrationPromise = null;
+    }
+  });
 
   const handleRegistrationPromise = () => {
     hasError = false;
     registrationProcessing = true;
-    _registrationResultTxId = undefined;
+    registrationResultTxId = undefined;
     registrationPromise = $adapter
       ? registerMerchant({
           connection: new Connection(RPC_API_URL, CONFIRMED),
@@ -28,14 +42,11 @@
             if (result.error) {
               throw result.error;
             }
-            _registrationResultTxId = result.value;
+            registrationResultTxId = result.value;
             return result.value;
           })
           .finally(() => {
             registrationProcessing = false;
-            // registrationPromise is supposed to be unset after checking the txid for success
-            // we are doing it here for tests
-            registrationPromise = null;
           })
       : null;
   };
@@ -47,6 +58,8 @@
     hasError = true;
     return null;
   };
+
+  onDestroy(unsubscribe);
 </script>
 
 {#if $connected}
@@ -55,9 +68,8 @@
       {#if registrationPromise}
         {#await registrationPromise}
           <p>registering merchant</p>
-        {:then _txId}
-          <p>dooooooooooooone</p>
-          <!-- <TrasactionResult {txId} sideEffect={getMerchantOrBust($adapter)} /> -->
+        {:then txId}
+          <InstructionResult {txId} {sideEffect} />
         {:catch error}
           <!-- TODO: find better way to call this func, as this way is frowned upon in svelte-world-->
           {setError() || ''}
