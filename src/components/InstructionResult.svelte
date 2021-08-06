@@ -14,11 +14,11 @@
   export let txId: string | void;
   export let sideEffect: Promise<void> | null = null;
   export let baseMsg = txId
-    ? `<br/><a class="toast-link" href="${EXPLORER_URL}/tx/${txId}?cluster=custom&customUrl=${RPC_API_URL}" target="_blank">View on Solana Explorer</a>`
+    ? `<a class="toast-link" href="${EXPLORER_URL}/tx/${txId}?cluster=custom&customUrl=${RPC_API_URL}" target="_blank">View on Solana Explorer</a>`
     : '';
 
   const toast = toasts.add({
-    description: `Loading, please wait...${baseMsg}`,
+    description: `Loading, please wait...`,
     duration: txTimeout,
     showProgress: true,
     theme: 'dark',
@@ -39,16 +39,14 @@
       if (toast.update) {
         toast.update({
           description: baseMsg,
-          title: `Processing ${txName}`,
+          title: txName,
         });
       }
     }
     if (value && txId && value.get(txId)?.status == TxStatus.Success) {
       if (toast.update) {
         toast.update({
-          description: baseMsg,
           duration: txCloseTimeout,
-          title: `${txName}`,
           type: 'success',
         });
         sleep(txCloseTimeout).then(() => removeToast());
@@ -56,8 +54,6 @@
     } else if (value && txId && value.get(txId)?.status == TxStatus.Fail) {
       if (toast.update) {
         toast.update({
-          description: baseMsg,
-          title: `${txName}`,
           duration: txCloseTimeout,
           type: 'error',
         });
@@ -72,7 +68,6 @@
 <main>
   {#if txId}
     {#if $transactionsMap.get(txId)?.status === TxStatus.Success}
-      <!-- <p style="color: green">Success!</p> -->
       {#if sideEffect}
         {#await sideEffect}
           <p><!-- side effect loading --></p>
