@@ -40,13 +40,6 @@
     // no idea why this line is necessary but without it items does not update
     items = items;
   }
-
-  const tokens = Array.from($tokenMap.values()).map((token) => {
-    return {
-      label: token.symbol,
-      value: token.address,
-    };
-  });
 </script>
 
 <div class="row">
