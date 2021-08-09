@@ -1,12 +1,13 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
   import { Connection } from '@solana/web3.js';
-  import { adapter, connected } from '../../stores';
-  import { PROGRAM_ID, RPC_API_URL } from '../../helpers/config';
-  import { CONFIRMED } from '../../helpers/constants';
-  import { registerMerchant } from '../../solpayments/transactions';
-  import { transactionsMap, TxStatus } from '../../stores/transaction';
-  import InstructionResult from '../InstructionResult.svelte';
+  import { adapter, connected } from '../../../stores';
+  import { PROGRAM_ID, RPC_API_URL } from '../../../helpers/config';
+  import { CONFIRMED } from '../../../helpers/constants';
+  import { registerMerchant } from '../../../solpayments/transactions';
+  import { transactionsMap, TxStatus } from '../../../stores/transaction';
+  import InstructionResult from '../../InstructionResult.svelte';
+  import PackagesForm from './packages.svelte';
 
   export let sideEffect: Promise<void> | null = null;
   let seed: string;
@@ -47,6 +48,7 @@
           })
           .finally(() => {
             registrationProcessing = false;
+            seed = '';
           })
       : null;
   };
@@ -90,11 +92,13 @@
             bind:value={seed}
             name="seed"
             id="merchant-seed"
+            disabled={processing}
           />
         </div>
       </div>
     </div>
     <!-- end row -->
+    <PackagesForm /><!-- end row -->
     <div class="row">
       <div class="col-lg-6">
         <div class="mb-3">
