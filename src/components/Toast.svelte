@@ -2,7 +2,6 @@
   /**
    * This is derived from https://github.com/mzohaibqc/svelte-toasts/blob/main/src/FlatToast.svelte
    */
-
   import { onMount } from 'svelte';
   import { tweened } from 'svelte/motion';
   import { linear } from 'svelte/easing';
