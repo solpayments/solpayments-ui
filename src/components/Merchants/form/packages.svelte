@@ -1,13 +1,26 @@
 <script lang="ts">
+  import { tokenMap } from '../../../stores/tokenRegistry';
   import { WRAPPED_SOL_MINT } from '../../../helpers/solana';
   import { forHumans } from '../../../helpers/utils';
 
   const defaultMint = WRAPPED_SOL_MINT.toBase58();
 
   $: items = [
-    { duration: 60 * 10, mint: defaultMint, name: 'daily', price: 0.1, trial: 0 },
-    { duration: 60 * 60 * 24 * 30, mint: defaultMint, name: 'monthly', price: 0.2, trial: 0 },
-    { duration: 60 * 60 * 24 * 365, mint: defaultMint, name: 'yearly', price: 2, trial: 0 },
+    { duration: 60 * 60 * 24, mint: defaultMint, name: 'daily', price: 0.1, trial: 0 },
+    {
+      duration: 60 * 60 * 24 * 30,
+      mint: defaultMint,
+      name: 'monthly',
+      price: 0.2,
+      trial: 60 * 60 * 24,
+    },
+    {
+      duration: 60 * 60 * 24 * 365,
+      mint: defaultMint,
+      name: 'yearly',
+      price: 2,
+      trial: 60 * 60 * 24 * 15,
+    },
   ];
 
   function add() {
@@ -27,6 +40,13 @@
     // no idea why this line is necessary but without it items does not update
     items = items;
   }
+
+  const tokens = Array.from($tokenMap.values()).map((token) => {
+    return {
+      label: token.symbol,
+      value: token.address,
+    };
+  });
 </script>
 
 <div class="row">
@@ -81,23 +101,28 @@
               <td>
                 <div class="row">
                   <div class="col">
-                    <input
-                      class="form-control"
-                      name="price"
-                      type="number"
-                      min="0"
-                      bind:value={item.price}
-                      required={true}
-                    />
-                  </div>
-                  <div class="col">
-                    <select class="form-control" name="mint" bind:value={item.mint} required={true}>
-                      <!-- {#if $tokenMap}
-                    {#each Array.from($tokenMap.values()) as token}
-                      <option value={token.address}>{token.symbol}</option>
-                    {/each}
-                  {/if} -->
-                    </select>
+                    <div class="input-group">
+                      <input
+                        class="form-control"
+                        name="price"
+                        type="number"
+                        min="0"
+                        bind:value={item.price}
+                        required={true}
+                      />
+                      <select
+                        class="form-control"
+                        name="mint"
+                        bind:value={item.mint}
+                        required={true}
+                      >
+                        {#if $tokenMap}
+                          {#each Array.from($tokenMap.values()) as token}
+                            <option value={token.address}>{token.symbol}</option>
+                          {/each}
+                        {/if}
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <p>&nbsp;</p></td
