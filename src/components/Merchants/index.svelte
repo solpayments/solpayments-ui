@@ -7,7 +7,7 @@
   import { adapter, connected } from '../../stores';
   import { getMerchantAccounts } from '../../solpayments/merchants';
   import { merchantAccounts } from '../../solpayments/stores';
-  import AccountForm from './form.svelte';
+  import AccountForm from './form/index.svelte';
 
   let merchantsPromise: Promise<any> | null = null;
   export let merchantsTimeout = 1000 * 30;
@@ -43,20 +43,10 @@
 </script>
 
 <div class="row">
-  <div class="col-xl-6">
+  <div class="col-xl-12">
     <div class="card card-height-100">
       <div class="card-body">
         {#if $connected}
-          {#if merchantsPromise}
-            {#await merchantsPromise}
-              <p>loading merchants</p>
-            {:catch _error}
-              <p style="color: red">{_error}</p>
-            {/await}
-          {:else}
-            <p>not loading merchants</p>
-          {/if}
-
           <!-- {#if $merchantAccounts} -->
           <div class="float-end">
             <div class="dropdown">
@@ -104,15 +94,25 @@
             </table>
           </div>
           <!-- {/if} -->
+          {#if merchantsPromise}
+            {#await merchantsPromise}
+              <p>loading...</p>
+            {:catch _error}
+              <p style="color: red">{_error}</p>
+            {/await}
+          {:else}
+            <!-- <p>not loading merchants</p> -->
+          {/if}
         {/if}
       </div>
     </div>
   </div>
-
-  <div class="col-xl-6">
+</div>
+<div class="row">
+  <div class="col-xl-12">
     <div class="card card-height-100">
       <div class="card-body">
-        <h4 class="card-title mb-4">Create Account</h4>
+        <h3 class="card-title mb-4">Create Account</h3>
         <AccountForm sideEffect={loadMerchantsSideEffectFunc()} />
       </div>
     </div>
